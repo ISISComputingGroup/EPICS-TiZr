@@ -1,0 +1,57 @@
+record(calc, "$(P)PVONE:OUT_OF_RANGE"){
+    field(DESC, "Is PVONE in range")
+    field(CALC, "((A > B) && (A < C))?0:1")
+    field(INPA, "$(PVONE) CP MS")
+    field(INPB, "$(PVONE_MIN)") # Need to figure out a default minimum value! (e.g. -Inf)
+    field(INPC, "$(PVONE_MAX)") # Need to figure out a default maximum value! (e.g. +Inf)
+    # field(OUT, "$(P)OUT_OF_RANGE.A PP MS")
+    # field(FLNK, "$(P)OUT_OF_RANGE")
+}
+
+record(calc, "$(P)PVTWO:OUT_OF_RANGE"){
+    field(DESC, "Is PVTWO in range")
+    field(CALC, "((A > B) && (A < C))?0:1")
+    field(INPA, "$(PVTWO) CP MS")
+    field(INPB, "$(PVTWO_MIN)") # Need to figure out a default minimum value! (e.g. -Inf)
+    field(INPC, "$(PVTWO_MAX)") # Need to figure out a default maximum value! (e.g. +Inf)
+    # field(OUT, "$(P)OUT_OF_RANGE.B PP MS")
+    # field(FLNK, "$(P)OUT_OF_RANGE")
+}
+
+record(calcout, "$(P)OUT_OF_RANGE"){
+    field(CALC, "(A || B)")
+    field(INPA, "$(P)PVONE:OUT_OF_RANGE CP MS")
+    field(INPB, "$(P)PVTWO:OUT_OF_RANGE CP MS")
+    field(OOPT, "When Non-zero")
+    field(HSV, "MAJOR")
+    field(HIGH, "1")
+    #field(FLNK, "$(P)WRITE_SAFE_VALUE")
+    field(OUT, "$(P)WRITE_SAFE_VALUE.PROC MS")
+    field(TPRO, "1")
+}
+
+# record(calcout, "$(P)OUT_OF_RANGE"){
+#     field(CALC, "A || B")
+#     field(INPA, "$(P)PVONE:OUT_OF_RANGE CP MS")
+#     field(INPB, "$(P)PVTWO:OUT_OF_RANGE CP MS")
+#     field(OOPT, "When Non-zero")
+#     #field(FLNK, "$(P)WRITE_SAFE_VALUE")
+#     field(OUT, "$(P)WRITE_SAFE_VALUE.PROC MS")
+#     field(TPRO, "1")
+# }
+
+record(ao, "$(P)WRITE_SAFE_VALUE"){
+    field(VAL, "$(SAFE_VALUE)")
+    field(PINI, "YES")
+    field(OUT, "$(PVONE) PP MSS")
+    # field(HSV, "MAJOR")
+    # field(HIGH, "$(SAFE_VALUE)")
+    field(FLNK, "$(P)SET_ALARMS")
+    field(TPRO, "1")
+}
+
+record(dfanout, "$(P)SET_ALARMS"){
+    field(DOL, "MAJOR")
+    field(OUTA, "$(PVONE).SEVR")
+    field(OUTB, "$(PVTWO).SEVR")
+}
