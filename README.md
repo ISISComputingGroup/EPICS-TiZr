@@ -1,2 +1,2 @@
-# EPICS-Dh2000
-EPICS support module for Ocean Optics DH-2000 BAL Shutter
+# EPICS-TiZr
+EPICS support module to monitor a TiZr sample cell
