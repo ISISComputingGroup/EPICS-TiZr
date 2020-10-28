@@ -4,8 +4,6 @@ record(calcout, "$(P)PVONE:OUT_OF_RANGE"){
     field(INPA, "$(PVONE) CP MS")
     field(INPB, "$(PVONE_MIN)") # Need to figure out a default minimum value! (e.g. -Inf)
     field(INPC, "$(PVONE_MAX)") # Need to figure out a default maximum value! (e.g. +Inf)
-    # field(OUT, "$(P)OUT_OF_RANGE.A PP MS")
-    # field(FLNK, "$(P)OUT_OF_RANGE")
 }
 
 record(calcout, "$(P)PVTWO:OUT_OF_RANGE"){
@@ -14,8 +12,6 @@ record(calcout, "$(P)PVTWO:OUT_OF_RANGE"){
     field(INPA, "$(PVTWO) CP MS")
     field(INPB, "$(PVTWO_MIN)") # Need to figure out a default minimum value! (e.g. -Inf)
     field(INPC, "$(PVTWO_MAX)") # Need to figure out a default maximum value! (e.g. +Inf)
-    # field(OUT, "$(P)OUT_OF_RANGE.B PP MS")
-    # field(FLNK, "$(P)OUT_OF_RANGE")
 }
 
 record(calcout, "$(P)OUT_OF_RANGE"){
@@ -25,49 +21,14 @@ record(calcout, "$(P)OUT_OF_RANGE"){
     field(OOPT, "When Non-zero")
     field(HSV, "MAJOR")
     field(HIGH, "0.8")
-    field(OUT, "$(P)_SETWARNING.PROC")
-    # field(OUT, "$(P)WRITE_SAFE_VALUE.PROC")
+    field(OUT, "$(P)WRITE_SAFE_VALUE.PROC")
     field(TPRO, "1")
 }
 
-# record(calcout, "$(P)OUT_OF_RANGE"){
-#     field(CALC, "A || B")
-#     field(INPA, "$(P)PVONE:OUT_OF_RANGE CP MS")
-#     field(INPB, "$(P)PVTWO:OUT_OF_RANGE CP MS")
-#     field(OOPT, "When Non-zero")
-#     #field(FLNK, "$(P)WRITE_SAFE_VALUE")
-#     field(OUT, "$(P)WRITE_SAFE_VALUE.PROC MS")
-#     field(TPRO, "1")
-# }
-
-
-# record(calc, "$(P)WRITE_SAFE_VALUE"){
-#     field(CALC, "A + B")
-#     field(INPA, "$(SAFE_VALUE)")
-#     field(INPB, "0.00001")
-#     # field(PINI, "YES")
-#     # field(OUT, "$(PVONE).DRVH PP MSS") # This will not overwrite the drvh value to 99999 when a valid combination of pvone and pvtwo are written. need the set_drvh pv to do this logic?
-#     # field(OUT, "$(P)SET_DRVH.PROC PP MS")
-#     field(HSV, "MINOR")
-#     field(HIGH, "$(SAFE_VALUE)")
-#     # field(HHSV, "MAJOR")
-#     # field(HIHI, "5")
-#     field(FLNK, "$(P)SET_DRVH")
-#     field(TPRO, "1")
-# }
-
-
-record(calcout, "$(P)WRITE_SAFE_VALUE"){
-    field(CALC, "A + B")
-    field(INPA, "$(SAFE_VALUE)")
-    field(INPB, "0.00001")
-    # field(PINI, "YES")
+record(ao, "$(P)WRITE_SAFE_VALUE"){
+    field(VAL, "$(SAFE_VALUE)")
     field(OUT, "$(PVONE) PP")
-    field(HSV, "MINOR")
-    field(HIGH, "$(SAFE_VALUE)")
-    # field(HHSV, "MAJOR")
-    # field(HIHI, "5")
-    # field(FLNK, "$(P)SET_DRVH")
+    field(FLNK, "$(P)_SETWARNING")
     field(TPRO, "1")
 }
 
@@ -79,7 +40,6 @@ record(bo, "$(P)TIZRWARNING"){
 record(bo, "$(P)_SETWARNING"){
     field(VAL, "1")
     field(OUT, "$(P)TIZRWARNING PP")
-    field(FLNK, "$(P)WRITE_SAFE_VALUE")
 }
 
 record(bo, "$(P)_RESETWARNING"){
@@ -87,67 +47,3 @@ record(bo, "$(P)_RESETWARNING"){
     field(VAL, "0")
     field(OUT, "$(P)TIZRWARNING")
 }
-
-record(calcout, "$(P)SET_DRVH"){
-    # field(CALC, "A?$(SAFE_VALUE):99999")
-    field(CALC, "A?B:99999")
-    field(INPA, "$(P)OUT_OF_RANGE MS")
-    field(INPB, "$(P)WRITE_SAFE_VALUE MS")
-    field(OUT, "$(PVONE).DRVH PP MS")
-
-}
-
-# Error setters
-# record(calcout, "$(P)PVTWO:SETERROR") {
-#     field(DESC, "Transfer error from PVONE to PVTWO")
-#     #INPA is set by the stream protocol file
-#     field(INPA, "$(PVTWO)")
-#     field(INPB, "$(P)WRITE_SAFE_VALUE MS")
-#     field(CALC, "A")
-#     field(OUT, "$(PVTWO) PP MS")
-#     field(TPRO, "1")
-# }
-
-# record(ao, "$(P)ANERROR"){
-#     field(VAL, "1")
-#     field(PINI, "YES")
-#     field(OSV, "MAJOR")
-# }
-
-record(calcout, "$(P)COPYERRORS") {
-    field(DESC, "Transfer error from PVONE to PVTWO")
-    #INPA is set by the stream protocol file
-    field(INPA, "$(PVTWO) MS")
-    field(INPB, "$(P)WRITE_SAFE_VALUE MS")
-    field(CALC, "A")
-    field(OUT, "$(PVTWO) PP MS")
-    field(TPRO, "1")
-}
-
-# record(ao, "$(P)WRITE_SAFE_VALUE"){
-#     field(VAL, "$(SAFE_VALUE)")
-#     field(PINI, "YES")
-#     field(OUT, "$(PVONE) PP MSS")
-#     # field(HSV, "MAJOR")
-#     # field(HIGH, "$(SAFE_VALUE)")
-#     field(SEVR, "HIGH")
-#     field(HIGH, "49.9")
-#     field(FLNK, "$(P)SET_ALARMS")
-#     field(TPRO, "1")
-# }
-
-
-record(ao, "$(P)VALUE1:SP")
-{
-    field(VAL, "10")
-    field(PINI, "YES")
-}
-
-alias("$(P)VALUE1:SP", "$(P)VALUE1")
-
-record(ao, "$(P)VALUE2")
-{
-    field(VAL, "19")
-    field(PINI, "YES")
-}
-
