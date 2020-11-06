@@ -1,19 +1,21 @@
 record(calcout, "$(P)PVONE:OUT_OF_RANGE"){
     field(DESC, "Is PVONE in range")
-    field(CALC, "(A < B)?0:1")
+    field(SCAN, "1 second")
+    field(CALC, "A > B")
     field(INPA, "$(PVONE) CP MS")
     field(INPB, "$(PVONE_MAX)")
 }
 
 record(calcout, "$(P)PVTWO:OUT_OF_RANGE"){
     field(DESC, "Is PVTWO in range")
-    field(CALC, "(A < B)?0:1")
+    field(SCAN, "1 second")
+    field(CALC, "A > B")
     field(INPA, "$(PVTWO) CP MS")
     field(INPB, "$(PVTWO_MAX)")
 }
 
 record(calcout, "$(P)OUT_OF_RANGE"){
-    field(CALC, "(A && B)?1:0")
+    field(CALC, "A && B")
     field(INPA, "$(P)PVONE:OUT_OF_RANGE CP MS")
     field(INPB, "$(P)PVTWO:OUT_OF_RANGE CP MS")
     field(OOPT, "When Non-zero")
@@ -27,9 +29,9 @@ record(ao, "$(P)WRITE_SAFE_VALUE"){
 }
 
 record(bo, "$(P)TIZRWARNING"){
-    field(DESC, "Indicates TiZr safe value applied")
-    field(ONAM, "TiZr cell safe value applied")
-    field(ZNAM, "TiZr cell normal operation")
+    field(DESC, "Safe value applied or out of range")
+    field(ONAM, "Range Warning")
+    field(ZNAM, "Normal Ops")
     field(OSV, "MAJOR")
     field(ZSV, "NO_ALARM")
     info(INTEREST, "HIGH")
@@ -42,6 +44,6 @@ record(bo, "$(P)_SETWARNING"){
 
 record(bo, "$(P)_RESETWARNING"){
     field(SCAN, "5 second")
-    field(VAL, "0")
+    field(VAL, "$(P)OUT_OF_RANGE")
     field(OUT, "$(P)TIZRWARNING")
 }
