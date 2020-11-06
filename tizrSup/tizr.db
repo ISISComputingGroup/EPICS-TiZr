@@ -1,6 +1,7 @@
 record(calcout, "$(P)PVONE:OUT_OF_RANGE"){
     field(DESC, "Is PVONE in range")
     field(SCAN, "1 second")
+    field(PINI, "YES")
     field(CALC, "A > B")
     field(INPA, "$(PVONE) CP MS")
     field(INPB, "$(PVONE_MAX)")
@@ -9,6 +10,7 @@ record(calcout, "$(P)PVONE:OUT_OF_RANGE"){
 record(calcout, "$(P)PVTWO:OUT_OF_RANGE"){
     field(DESC, "Is PVTWO in range")
     field(SCAN, "1 second")
+    field(PINI, "YES")
     field(CALC, "A > B")
     field(INPA, "$(PVTWO) CP MS")
     field(INPB, "$(PVTWO_MAX)")
@@ -44,6 +46,9 @@ record(bo, "$(P)_SETWARNING"){
 
 record(bo, "$(P)_RESETWARNING"){
     field(SCAN, "5 second")
-    field(VAL, "$(P)OUT_OF_RANGE")
-    field(OUT, "$(P)TIZRWARNING")
+    field(PINI, "YES")
+    # We do not want to process on change here so the warning is persisted for a few seconds
+    field(DOL, "$(P)OUT_OF_RANGE")
+    field(OMSL, "closed_loop")
+    field(OUT, "$(P)TIZRWARNING PP")
 }
