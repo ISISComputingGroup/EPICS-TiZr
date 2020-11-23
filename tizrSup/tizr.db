@@ -17,9 +17,19 @@ record(calcout, "$(P)PVTWO:OUT_OF_RANGE"){
 }
 
 record(calcout, "$(P)OUT_OF_RANGE"){
+    field(DESC, "Are both PVs out of range?")
     field(CALC, "A && B")
     field(INPA, "$(P)PVONE:OUT_OF_RANGE CP MS")
     field(INPB, "$(P)PVTWO:OUT_OF_RANGE CP MS")
+    field(OOPT, "When Non-zero")
+    field(OUT, "$(P)WRITE_SAFE_VALUE:_CALC.PROC")
+}
+
+record(calcout, "$(P)WRITE_SAFE_VALUE:_CALC") {
+    field(DESC, "Calculate whether to write safe value")
+    field(CALC, "A && B")
+    field(INPA, "$(P)OUT_OF_RANGE CP MS")
+    field(INPB, "$(P)MONITORING_ON")
     field(OOPT, "When Non-zero")
     field(OUT, "$(P)WRITE_SAFE_VALUE.PROC")
 }
@@ -48,7 +58,15 @@ record(bo, "$(P)_RESETWARNING"){
     field(SCAN, "5 second")
     field(PINI, "YES")
     # We do not want to process on change here so the warning is persisted for a few seconds
-    field(DOL, "$(P)OUT_OF_RANGE")
+    field(DOL, "$(P)WRITE_SAFE_VALUE:_CALC")
     field(OMSL, "closed_loop")
     field(OUT, "$(P)TIZRWARNING PP")
+}
+
+record(bi, "$(P)MONITORING_ON") {
+    field(DESC, "Whether safe value will be written")
+    field(VAL, "$(MONITORING_ON=0)")
+    field(ONAM, "Yes")
+    field(ZNAM, "No")
+    info(INTEREST, "HIGH")
 }
